@@ -1,5 +1,5 @@
 node_modules
 .env
-
+.trunk
 # Local Netlify folder
 .netlify
