@@ -15,6 +15,26 @@ export function slackApi(
 	}).then((res) => res.json());
 }
 
+export function verifySlackRequest(request: HandlerEvent) {
+	const secret = process.env.SLACK_SIGNING_SECRET!;
+	const signature = request.headers['x-slack-signature'];
+	const timestamp = Number(request.headers['x-slack-request-timestamp']);
+	const now = Math.floor(Date.now() / 1000); // match Slack timestamp precision
+
+	// if the timestamp is more than five minutes off assume something’s funky
+	if (Math.abs(now - timestamp) > 300) {
+		return false;
+	}
+
+	// make a hash of the request using the same approach Slack used
+	const hash = createHmac('sha256', secret)
+		.update(`v0:${timestamp}:${request.body}`)
+		.digest('hex');
+
+	// know the request is valid if our hash matches Slack’s
+	return `v0=${hash}` === signature;
+}
+
 export const blocks = {
 	section: ({ text }: SectionBlockArgs): SlackBlockSection => {
 		return {
