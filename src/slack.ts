@@ -59,6 +59,48 @@ async function handleSlashCommand(payload: SlackSlashCommandPayload) {
 	};
 }
 
+async function handleInteractivityMessage(payload: SlackModalPayload) {
+	const callback_id = payload.callback_id ?? payload.view.callback_id; // quick fallback
+
+	switch (callback_id) {
+		case 'cleo-modal':
+			const data = payload.view.state.values;
+			const fields = {
+				opinion: data.opinion_block.opinion.value,
+				spiceLevel: data.spice_level_block.spice_level.selected_option.value,
+				submitter: payload.user.name,
+			};
+
+			await slackApi('chat.postMessage', {
+				channel: 'C06CFHVTFAQ', // #general channel ID
+				text: `Oh dang! :eyes: <@${payload.user.id}> just started a Cleo with a ${fields.spiceLevel} take:\n\n*${fields.opinion}*\n\n...let's discuss.`});
+			break;
+			const channel = payload.channel?.id;
+			const user_id = payload.user.id;
+			const thread_ts = payload.message.thread_ts ?? payload.message.ts;
+
+			await slackApi('chat.postMessage', {
+				channel,
+				thread_ts,
+				text: `Hey <@${user_id}>, an opinion like this one deserves a heated public debate. Run the \`/cleo\` slash command in a general main channel to start one!`,
+			});
+
+			break;
+
+		default:
+			console.log(`No handler defined for ${payload.view.callback_id}`);
+			return {
+				statusCode: 400,
+				body: `No handler defined for ${payload.view.callback_id}`,
+			};
+	}
+
+	return {
+		statusCode: 200,
+		body: '',
+	};
+}
+
 export const handler: Handler = async (event) => {
 	const valid = verifySlackRequest(event);
 	if (!valid) {
@@ -73,7 +115,10 @@ export const handler: Handler = async (event) => {
 		return handleSlashCommand(body as SlackSlashCommandPayload);
 	}
 
-	// TODO handle interactivity (e.g. context commands, modals)
+	if (body.payload) {
+		const payload = JSON.parse(body.payload);
+		return handleInteractivityMessage(payload);
+	}
 
 	return {
 		statusCode: 200,
