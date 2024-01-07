@@ -75,6 +75,8 @@ async function handleInteractivityMessage(payload: SlackModalPayload) {
 				channel: 'C06CFHVTFAQ', // #general channel ID
 				text: `Oh dang! :eyes: <@${payload.user.id}> just started a Cleo with a ${fields.spiceLevel} take:\n\n*${fields.opinion}*\n\n...let's discuss.`});
 			break;
+
+			case 'start-cleo-nudge':
 			const channel = payload.channel?.id;
 			const user_id = payload.user.id;
 			const thread_ts = payload.message.thread_ts ?? payload.message.ts;
