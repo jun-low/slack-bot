@@ -61,6 +61,7 @@ async function handleSlashCommand(payload: SlackSlashCommandPayload) {
 }
 
 async function handleInteractivityMessage(payload: SlackModalPayload) {
+	
 	const callback_id = payload.callback_id ?? payload.view.callback_id; // quick fallback
 
 	switch (callback_id) {
@@ -79,7 +80,7 @@ async function handleInteractivityMessage(payload: SlackModalPayload) {
 				text: `Oh dang! :eyes: <@${payload.user.id}> just started a Cleo with a ${fields.spiceLevel} take:\n\n*${fields.opinion}*\n\n...let's discuss.`});
 			break;
 
-			case 'start-cleo-nudge':
+			case 'start_cleo_nudge':
 			const channel = payload.channel?.id;
 			const user_id = payload.user.id;
 			const thread_ts = payload.message.thread_ts ?? payload.message.ts;
@@ -127,6 +128,6 @@ export const handler: Handler = async (event) => {
 
 	return {
 		statusCode: 200,
-		body: 'TODO: handle Slack commands and interactivity requests',
+		body: '',
 	};
 };
