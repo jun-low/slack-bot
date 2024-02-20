@@ -27,10 +27,10 @@ export function verifySlackRequest(request: HandlerEvent) {
 	}
 
 	// make a hash of the request using the same approach Slack used
-	const hash = createHmac('sha256', secret)
-		.update(`v0:${timestamp}:${request.body}`)
-		.digest('hex');
-
+	  const hash = createHmac('sha256', secret)
+    .update(`v0:${timestamp}:${request.body}`, 'utf-8')
+    .digest('hex');
+		
 	// know the request is valid if our hash matches Slack’s
 	return `v0=${hash}` === signature;
 }
