@@ -1,6 +1,8 @@
 import type { HandlerEvent } from '@netlify/functions';
 import { createHmac } from 'crypto';
 
+export const CHANNELID = 'C06CFHVTFAQ'; // #general channel ID
+
 export function slackApi(
 	endpoint: SlackApiEndpoint,
 	body: SlackApiRequestBody,

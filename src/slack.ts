@@ -1,6 +1,6 @@
 import type { Handler } from '@netlify/functions';
 import { parse } from 'querystring';
-import { blocks, modal, slackApi, verifySlackRequest } from './util/slack';
+import { blocks, modal, slackApi, verifySlackRequest, CHANNELID } from './util/slack';
 import { saveItem } from './util/notion';
 
 async function handleSlashCommand(payload: SlackSlashCommandPayload) {	
@@ -76,7 +76,7 @@ async function handleInteractivityMessage(payload: SlackModalPayload) {
 			await saveItem(fields);
 			
 			await slackApi('chat.postMessage', {
-				channel: 'C06CFHVTFAQ', // #general channel ID
+				channel: CHANNELID,
 				text: `Oh dang! :eyes: <@${payload.user.id}> just started a Cleo with a ${fields.spiceLevel} take:\n\n*${fields.opinion}*\n\n...let's discuss.`});
 			break;
 
